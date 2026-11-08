@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stavby Bartončík – zemní práce, betonáže, ploty, demolice</title>
+<meta name="description" content="Zemní práce, betonáže, ploty a demolice na Luhačovicku. Vlastní strojový park. Férové jednání, kvalita za přijatelnou cenu.">
+<meta name="theme-color" content="#0b0d0f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,500;0,700;0,800;1,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0d0f;--bg2:#111417;--panel:#15191d;--ink:#eef0f1;--muted:#8b949b;--line:rgba(255,255,255,.09);
+  --sun:#f2b705;--sun2:#ffcf3a;--sun-ink:#111;
+  --head:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Inter",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:80px;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.65 var(--body);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body.lock{overflow:hidden}
+h1,h2,h3{font-family:var(--head);font-weight:800;line-height:.95;margin:0;text-transform:uppercase;letter-spacing:.5px}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--sun);outline-offset:4px}
+::selection{background:var(--sun);color:#111}
+.wrap{max-width:1320px;margin:0 auto;padding:0 clamp(20px,4vw,56px)}
+.eyebrow{display:inline-flex;align-items:center;gap:12px;font:600 13px/1 var(--body);letter-spacing:3px;text-transform:uppercase;color:var(--sun)}
+.eyebrow::before{content:"";width:34px;height:2px;background:var(--sun)}
+.sun{color:var(--sun)}
+.outline{color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.55)}
+
+/* grain */
+.grain{position:fixed;inset:-50%;width:200%;height:200%;pointer-events:none;z-index:90;opacity:.06;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 1s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-4%,3%)}40%{transform:translate(3%,-5%)}60%{transform:translate(-2%,6%)}80%{transform:translate(5%,-2%)}100%{transform:translate(0,0)}}
+
+/* preloader */
+.loader{position:fixed;inset:0;z-index:200;background:#07080a;display:grid;place-items:center;transition:clip-path 1.1s var(--ease);clip-path:inset(0 0 0 0)}
+.loader.done{clip-path:inset(0 0 100% 0)}
+.loader .lg{font:800 clamp(40px,8vw,110px)/1 var(--head);letter-spacing:2px;overflow:hidden;display:flex}
+.loader .lg span{display:inline-block;transform:translateY(110%);animation:up .8s var(--ease) forwards}
+.loader .num{position:absolute;right:clamp(20px,4vw,56px);bottom:clamp(20px,4vw,48px);font:800 clamp(60px,12vw,180px)/1 var(--head);color:var(--sun)}
+.loader .bar{position:absolute;left:0;bottom:0;height:4px;background:var(--sun);width:0;transition:width .2s linear}
+@keyframes up{to{transform:none}}
+
+/* progress + cursor */
+.progress{position:fixed;top:0;left:0;height:3px;width:100%;background:var(--sun);transform-origin:0 50%;transform:scaleX(0);z-index:120}
+.cur,.cur-ring{position:fixed;top:0;left:0;pointer-events:none;z-index:150;border-radius:50%;mix-blend-mode:difference;display:none}
+.cur{width:8px;height:8px;margin:-4px 0 0 -4px;background:#fff}
+.cur-ring{width:40px;height:40px;margin:-20px 0 0 -20px;border:1.5px solid #fff;transition:width .3s var(--ease),height .3s var(--ease),margin .3s var(--ease),background .3s}
+.cur-ring.big{width:84px;height:84px;margin:-42px 0 0 -42px;background:#fff}
+.cur-ring .t{position:absolute;inset:0;display:grid;place-items:center;font:700 11px/1 var(--body);letter-spacing:1.5px;color:#000;opacity:0;transition:opacity .2s}
+.cur-ring.big .t{opacity:1}
+@media (pointer:fine){.cur,.cur-ring{display:block}body,a,button{cursor:none}input,textarea{cursor:text}}
+
+/* header */
+header{position:fixed;top:0;left:0;right:0;z-index:100;transition:transform .5s var(--ease),background .4s,backdrop-filter .4s,border-color .4s;border-bottom:1px solid transparent}
+header.solid{background:rgba(11,13,15,.72);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border-color:var(--line)}
+header.hide{transform:translateY(-100%)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:78px;gap:20px}
+.logo{font:800 26px/1 var(--head);letter-spacing:1.5px;display:flex;align-items:center;gap:10px}
+.logo i{width:26px;height:26px;background:var(--sun);clip-path:polygon(0 100%,50% 0,100% 100%,72% 100%,50% 56%,28% 100%);display:block}
+.logo b{color:var(--sun);font-weight:800}
+nav.main{display:flex;gap:34px;align-items:center}
+nav.main a.l{position:relative;font-weight:500;font-size:15px;color:#cfd4d7;padding:6px 0;overflow:hidden;display:inline-block}
+nav.main a.l span{display:block;transition:transform .45s var(--ease)}
+nav.main a.l span::after{content:attr(data-t);position:absolute;left:0;top:100%;color:var(--sun)}
+nav.main a.l:hover span{transform:translateY(-100%)}
+.pill{display:inline-flex;align-items:center;gap:10px;background:var(--sun);color:var(--sun-ink);font-weight:600;font-size:15px;padding:13px 22px;border-radius:999px;position:relative;overflow:hidden;isolation:isolate;transition:transform .3s var(--ease)}
+.pill::before{content:"";position:absolute;inset:0;background:#fff;transform:translateY(101%);border-radius:inherit;transition:transform .5s var(--ease);z-index:-1}
+.pill:hover::before{transform:none}
+.pill.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.3)}
+.pill.ghost::before{background:var(--sun)}
+.pill.ghost:hover{color:#111}
+.pill svg{transition:transform .4s var(--ease)}
+.pill:hover svg{transform:translateX(4px) rotate(-45deg)}
+.burger{display:none;width:46px;height:46px;border-radius:50%;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.25);position:relative}
+.burger span{position:absolute;left:14px;right:14px;height:2px;background:#fff;transition:transform .4s var(--ease),top .4s var(--ease)}
+.burger span:nth-child(1){top:18px}.burger span:nth-child(2){top:26px}
+body.menu .burger span:nth-child(1){top:22px;transform:rotate(45deg)}
+body.menu .burger span:nth-child(2){top:22px;transform:rotate(-45deg)}
+.mmenu{position:fixed;inset:0;z-index:99;background:#0b0d0f;clip-path:circle(0 at calc(100% - 44px) 39px);transition:clip-path .8s var(--ease);display:flex;flex-direction:column;justify-content:center;padding:0 28px}
+body.menu .mmenu{clip-path:circle(150% at calc(100% - 44px) 39px)}
+.mmenu a{font:800 clamp(48px,13vw,80px)/1.05 var(--head);text-transform:uppercase;opacity:0;transform:translateY(30px);transition:opacity .5s,transform .6s var(--ease)}
+body.menu .mmenu a{opacity:1;transform:none}
+body.menu .mmenu a:nth-child(2){transition-delay:.06s}body.menu .mmenu a:nth-child(3){transition-delay:.12s}body.menu .mmenu a:nth-child(4){transition-delay:.18s}body.menu .mmenu a:nth-child(5){transition-delay:.24s}
+.mmenu a.tel{font-size:28px;color:var(--sun);margin-top:24px}
+@media(max-width:900px){nav.main a.l,nav.main .pill{display:none}.burger{display:block}}
+
+/* hero */
+.hero{position:relative;height:100vh;height:100svh;min-height:640px;overflow:hidden;display:flex;align-items:flex-end}
+.hero .slides{position:absolute;inset:0}
+.hero .slides div{position:absolute;inset:-6% 0;background-size:cover;background-position:center;opacity:0;transform:scale(1.18);transition:opacity 1.6s ease,transform 7s linear}
+.hero .slides div.on{opacity:1;transform:scale(1.04)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,13,15,.55) 0%,rgba(11,13,15,.15) 35%,rgba(11,13,15,.75) 75%,var(--bg) 100%),radial-gradient(120% 80% at 0% 100%,rgba(11,13,15,.85),transparent 60%)}
+.hero .wrap{position:relative;z-index:2;width:100%;padding-bottom:clamp(40px,8vh,90px)}
+.hero h1{font-size:clamp(58px,11.5vw,188px);line-height:.86;letter-spacing:-.5px}
+.hero h1 .ln{display:block;overflow:hidden;padding-bottom:.04em}
+.hero h1 .ln>span{display:inline-block;transform:translateY(105%)}
+body.ready .hero h1 .ln>span{animation:up 1.2s var(--ease) forwards}
+body.ready .hero h1 .ln:nth-child(2)>span{animation-delay:.1s}
+body.ready .hero h1 .ln:nth-child(3)>span{animation-delay:.2s}
+.hero .row{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;margin-top:38px;flex-wrap:wrap}
+.hero p{max-width:40ch;font-size:clamp(17px,1.4vw,20px);color:#c4cacd;margin:0}
+.hero .btns{display:flex;gap:12px;flex-wrap:wrap}
+.fade-in{opacity:0;transform:translateY(24px)}
+body.ready .fade-in{animation:fin 1s var(--ease) forwards;animation-delay:var(--d,.5s)}
+@keyframes fin{to{opacity:1;transform:none}}
+.hero .dots{position:absolute;right:clamp(20px,4vw,56px);top:50%;transform:translateY(-50%);z-index:3;display:flex;flex-direction:column;gap:12px}
+.hero .dots button{width:3px;height:36px;background:rgba(255,255,255,.25);position:relative;overflow:hidden;border-radius:2px;padding:0}
+.hero .dots button.on::after{content:"";position:absolute;inset:0;background:var(--sun);transform-origin:top;animation:fill 6s linear forwards}
+@keyframes fill{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.scroll-hint{position:absolute;left:50%;bottom:22px;z-index:3;transform:translateX(-50%);width:26px;height:42px;border-radius:14px;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.4)}
+.scroll-hint::after{content:"";position:absolute;left:50%;top:9px;width:3px;height:8px;margin-left:-1.5px;border-radius:2px;background:var(--sun);animation:wheel 1.8s var(--ease) infinite}
+@keyframes wheel{0%{opacity:0;transform:translateY(-4px)}30%{opacity:1}100%{opacity:0;transform:translateY(14px)}}
+@media(max-width:900px){.hero .dots,.scroll-hint{display:none}}
+
+/* marquee */
+.marquee{border-block:1px solid var(--line);overflow:hidden;background:var(--bg2);padding:22px 0;position:relative}
+.marquee .tr{display:flex;width:max-content;animation:mq 38s linear infinite}
+.marquee:hover .tr{animation-play-state:paused}
+.marquee span{font:800 clamp(30px,4vw,54px)/1 var(--head);text-transform:uppercase;padding:0 28px;display:flex;align-items:center;gap:56px;white-space:nowrap}
+.marquee span::after{content:"";width:14px;height:14px;background:var(--sun);transform:rotate(45deg)}
+.marquee span:nth-child(even){color:transparent;-webkit-text-stroke:1.3px rgba(255,255,255,.5)}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+section{padding:clamp(90px,13vw,170px) 0;position:relative}
+.sh{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;margin-bottom:clamp(44px,6vw,80px);flex-wrap:wrap}
+.sh h2{font-size:clamp(48px,7.5vw,120px);margin-top:18px}
+.sh p{max-width:min(42ch,100%);color:var(--muted);margin:0}
+.sh>div{min-width:0;max-width:100%}
+
+/* split reveal */
+.split .w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.05em}
+.split .w>span{display:inline-block;transform:translateY(105%);transition:transform 1.1s var(--ease);transition-delay:calc(var(--i)*.05s)}
+.split.in .w>span{transform:none}
+.rv{opacity:0;transform:translateY(40px);transition:opacity 1s var(--ease),transform 1.1s var(--ease);transition-delay:var(--d,0s)}
+.rv.in{opacity:1;transform:none}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}
+.stat{padding:38px 28px 10px 0;border-right:1px solid var(--line)}
+.stat:last-child{border-right:0}
+.stat+.stat{padding-left:28px}
+.stat b{display:block;font:800 clamp(56px,7vw,104px)/1 var(--head);color:var(--ink)}
+.stat b small{font-size:.45em;color:var(--sun);margin-left:4px}
+.stat>span{color:var(--muted);font-size:15px}
+@media(max-width:900px){.stats{grid-template-columns:1fr 1fr}.stat{border-bottom:1px solid var(--line)}.stat:nth-child(2){border-right:0}.stat:nth-child(3){padding-left:0}}
+
+/* services */
+.svc{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:22px;overflow:hidden}
+.card{position:relative;background:var(--bg);padding:clamp(28px,3vw,44px);min-height:330px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;isolation:isolate}
+.card::before{content:"";position:absolute;inset:0;z-index:-1;opacity:0;transition:opacity .4s;
+  background:radial-gradient(420px circle at var(--x,50%) var(--y,50%),rgba(242,183,5,.16),transparent 60%)}
+.card:hover::before{opacity:1}
+.card .n{font:700 15px/1 var(--body);color:var(--muted);letter-spacing:2px}
+.card svg{width:54px;height:54px;color:var(--sun);transition:transform .7s var(--ease)}
+.card:hover svg{transform:rotate(-8deg) scale(1.12)}
+.card h3{font-size:clamp(32px,3vw,44px);margin:26px 0 10px}
+.card p{margin:0;color:var(--muted)}
+.card .top{display:flex;justify-content:space-between;align-items:flex-start}
+@media(max-width:1000px){.svc{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.svc{grid-template-columns:1fr}.card{min-height:0}}
+
+/* horizontal machines */
+.hs{padding:0;background:var(--bg2)}
+.hs-sticky{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;display:flex;flex-direction:column;justify-content:center;padding-top:60px}
+.hs .sh{margin-bottom:clamp(20px,4vh,44px)}
+.hs .sh h2{font-size:clamp(48px,min(7.5vw,11vh),120px)}
+.hs-track{display:flex;gap:28px;padding:0 clamp(20px,4vw,56px);will-change:transform}
+.mc{flex:0 0 auto;height:min(54vh,560px);position:relative;border-radius:22px;overflow:hidden;background:var(--panel);aspect-ratio:4/5;display:block;transform-style:preserve-3d;transition:transform .5s var(--ease)}
+.mc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.08);transition:transform 1.2s var(--ease),filter .6s;filter:saturate(.85) brightness(.85)}
+.mc:hover img{transform:scale(1.18);filter:saturate(1.05) brightness(1)}
+.mc::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,.88))}
+.mc .in{position:absolute;left:0;right:0;bottom:0;padding:28px;z-index:2}
+.mc .k{font:600 12px/1 var(--body);letter-spacing:2.5px;color:var(--sun);text-transform:uppercase}
+.mc h3{font-size:clamp(30px,2.6vw,40px);margin:12px 0 8px}
+.mc p{margin:0;color:#c3c9cc;font-size:15px}
+.mc .go{position:absolute;top:22px;right:22px;z-index:2;width:52px;height:52px;border-radius:50%;background:var(--sun);color:#111;display:grid;place-items:center;transform:scale(0) rotate(-90deg);transition:transform .6s var(--ease)}
+.mc:hover .go{transform:none}
+.mc .idx{position:absolute;top:22px;left:26px;z-index:2;font:800 20px/1 var(--head);color:rgba(255,255,255,.7)}
+.hs-bar{margin:40px clamp(20px,4vw,56px) 0;height:2px;background:var(--line);position:relative}
+.hs-bar i{position:absolute;left:0;top:0;bottom:0;background:var(--sun);width:100%;transform-origin:0 50%;transform:scaleX(0)}
+@media(max-width:900px){
+  .hs{padding:clamp(90px,13vw,170px) 0}
+  .hs-sticky{position:static;height:auto}
+  .hs-track{overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:12px;scrollbar-width:none}
+  .hs-track::-webkit-scrollbar{display:none}
+  .hs-sticky{padding-top:0}
+  .mc{flex-basis:78vw;height:auto;scroll-snap-align:center}
+  .mc .go{transform:none}
+  .hs-bar{display:none}
+}
+
+/* gallery */
+.gal{display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:clamp(130px,14vw,200px);gap:16px}
+.gi{position:relative;border-radius:18px;overflow:hidden;background:var(--panel);clip-path:inset(12% 12% 12% 12% round 18px);transition:clip-path 1.4s var(--ease)}
+.gi.in{clip-path:inset(0 0 0 0 round 18px)}
+.gi img{width:100%;height:100%;object-fit:cover;transform:scale(1.3);transition:transform 1.6s var(--ease)}
+.gi.in img{transform:scale(1)}
+.gi:hover img{transform:scale(1.07)}
+.gi:nth-child(1){grid-column:span 7;grid-row:span 3}
+.gi:nth-child(2){grid-column:span 5;grid-row:span 2}
+.gi:nth-child(3){grid-column:span 5;grid-row:span 2}
+.gi:nth-child(4){grid-column:span 4;grid-row:span 2}
+.gi:nth-child(5){grid-column:span 3;grid-row:span 2}
+@media(max-width:800px){.gal{grid-template-columns:1fr 1fr;grid-auto-rows:42vw}.gi:nth-child(n){grid-column:span 1;grid-row:span 1}.gi:nth-child(1){grid-column:span 2;grid-row:span 2}}
+
+/* why – scroll fill */
+.why{background:var(--bg)}
+.fill{font:800 clamp(44px,7vw,112px)/1 var(--head);text-transform:uppercase;letter-spacing:.3px;margin:0}
+.fill .w{color:rgba(255,255,255,.12);transition:color .25s}
+.fill .w.on{color:var(--ink)}
+.fill .w.hl.on{color:var(--sun)}
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:clamp(60px,8vw,110px)}
+.pl{border-top:1px solid var(--line);padding-top:26px}
+.pl b{font:800 16px/1 var(--head);color:var(--sun);letter-spacing:2px}
+.pl h3{font-size:34px;margin:14px 0 10px}
+.pl p{margin:0;color:var(--muted)}
+@media(max-width:800px){.pillars{grid-template-columns:1fr}}
+
+/* CTA band */
+.cta{padding:0;overflow:hidden;background:var(--sun);color:#111}
+.cta a{display:block;padding:clamp(60px,9vw,120px) 0;position:relative}
+.cta .big{font:800 clamp(70px,15vw,260px)/.9 var(--head);text-transform:uppercase;white-space:nowrap;display:flex;width:max-content;animation:mq 22s linear infinite}
+.cta .big span{padding-right:.4em}
+.cta .big span:nth-child(even){color:transparent;-webkit-text-stroke:2px #111}
+.cta .lbl{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.6);width:170px;height:170px;border-radius:50%;background:#111;color:var(--sun);display:grid;place-items:center;text-align:center;font:700 15px/1.2 var(--body);letter-spacing:1px;opacity:0;transition:transform .6s var(--ease),opacity .4s}
+.cta a:hover .lbl{opacity:1;transform:translate(-50%,-50%) scale(1)}
+
+/* contact */
+.contact .cols{display:grid;grid-template-columns:1fr 1.1fr;gap:clamp(40px,7vw,110px)}
+.cinfo .who{font:800 clamp(40px,4vw,56px)/1 var(--head);text-transform:uppercase;margin:0 0 30px}
+.cinfo dl{margin:0;display:grid;gap:26px}
+.cinfo dt{font:600 12px/1 var(--body);letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.cinfo dd{margin:0;font-size:clamp(20px,2vw,26px);font-weight:500}
+.cinfo dd a{background:linear-gradient(var(--sun),var(--sun)) 0 100%/0 2px no-repeat;transition:background-size .5s var(--ease)}
+.cinfo dd a:hover{background-size:100% 2px}
+form{display:grid;gap:8px}
+.f{position:relative;padding-top:22px}
+.f input,.f textarea{width:100%;font:400 20px/1.4 var(--body);color:var(--ink);background:transparent;border:0;border-bottom:1.5px solid rgba(255,255,255,.18);padding:12px 0 14px;outline:0;border-radius:0;transition:border-color .3s}
+.f textarea{min-height:130px;resize:vertical}
+.f label{position:absolute;left:0;top:36px;color:var(--muted);font-size:18px;pointer-events:none;transition:transform .4s var(--ease),color .3s,font-size .3s;transform-origin:0 0}
+.f input:focus~label,.f input:not(:placeholder-shown)~label,.f textarea:focus~label,.f textarea:not(:placeholder-shown)~label{transform:translateY(-30px) scale(.72);color:var(--sun)}
+.f i{position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--sun);transform:scaleX(0);transform-origin:0 50%;transition:transform .6s var(--ease)}
+.f input:focus~i,.f textarea:focus~i{transform:scaleX(1)}
+form .pill{justify-self:start;margin-top:26px;font-size:17px;padding:18px 30px}
+#formMsg{margin:10px 0 0;font-weight:600;min-height:1.6em}
+@media(max-width:900px){.contact .cols{grid-template-columns:1fr}}
+
+/* footer */
+footer{border-top:1px solid var(--line);padding:70px 0 34px;overflow:hidden}
+footer .huge{font:800 clamp(64px,16.5vw,290px)/.8 var(--head);text-transform:uppercase;letter-spacing:-1px;margin:0 0 40px;white-space:nowrap;background:linear-gradient(180deg,#2a3036,#0b0d0f 95%);-webkit-background-clip:text;background-clip:text;color:transparent}
+footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:var(--muted);font-size:14px}
+footer .top{cursor:pointer;display:inline-flex;gap:8px;align-items:center}
+footer .top:hover{color:var(--sun)}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:140;display:grid;grid-template-columns:1.25fr 1fr;background:var(--bg);visibility:hidden;clip-path:inset(100% 0 0 0);transition:clip-path .9s var(--ease),visibility 0s .9s}
+.modal.open{visibility:visible;clip-path:inset(0 0 0 0);transition:clip-path .9s var(--ease)}
+.m-media{position:relative;background:#000;overflow:hidden;display:flex;flex-direction:column}
+.m-stage{position:relative;flex:1;overflow:hidden}
+.m-stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.06);transition:opacity .7s,transform 1.2s var(--ease)}
+.m-stage img.on{opacity:1;transform:none}
+.m-thumbs{display:flex;gap:10px;padding:14px;overflow-x:auto;background:#07080a;scrollbar-width:thin}
+.m-thumbs button{flex:0 0 92px;height:66px;border-radius:10px;overflow:hidden;opacity:.45;transition:opacity .3s,box-shadow .3s;padding:0}
+.m-thumbs button img{width:100%;height:100%;object-fit:cover}
+.m-thumbs button[aria-current="true"]{opacity:1;box-shadow:0 0 0 2px var(--sun)}
+.m-thumbs button:hover{opacity:1}
+.m-arrows{position:absolute;right:20px;bottom:114px;display:flex;gap:10px;z-index:2}
+.rnd{width:54px;height:54px;border-radius:50%;background:rgba(0,0,0,.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.25);display:grid;place-items:center;transition:background .3s,color .3s}
+.rnd:hover{background:var(--sun);color:#111}
+.m-body{overflow-y:auto;padding:clamp(28px,4vw,64px);display:flex;flex-direction:column}
+.m-body .close{align-self:flex-end;margin-bottom:20px}
+.m-body h2{font-size:clamp(44px,5vw,80px);margin:14px 0 22px}
+.m-body>p{color:#c4cacd;margin:0}
+.spec{width:100%;border-collapse:collapse;margin:30px 0 34px}
+.spec th,.spec td{text-align:left;padding:15px 0;border-top:1px solid var(--line);font-size:16px;vertical-align:top}
+.spec th{width:44%;color:var(--muted);font-weight:500}
+.spec td{font-weight:600}
+.m-body .btns{display:flex;gap:12px;flex-wrap:wrap}
+.m-nav{margin-top:auto;padding-top:40px;display:flex;justify-content:space-between;gap:16px;font-weight:600;font-size:15px}
+.m-nav button{color:var(--muted);text-align:left;transition:color .3s}
+.m-nav button:last-child{text-align:right}
+.m-nav button:hover{color:var(--sun)}
+.m-nav small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.modal .m-body>*{opacity:0;transform:translateY(20px)}
+.modal.open .m-body>*{animation:fin .8s var(--ease) forwards;animation-delay:calc(.35s + var(--i,0)*.06s)}
+@media(max-width:900px){.modal{grid-template-columns:1fr;grid-template-rows:auto 1fr;overflow-y:auto}.m-media{height:52vh}.m-body{overflow:visible}}
+
+/* lightbox */
+.lb{position:fixed;inset:0;z-index:145;background:rgba(5,6,7,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:grid;place-items:center;opacity:0;visibility:hidden;transition:opacity .5s,visibility 0s .5s}
+.lb.open{opacity:1;visibility:visible;transition:opacity .5s}
+.lb img{max-width:90vw;max-height:84vh;border-radius:12px;transform:scale(.92);transition:transform .7s var(--ease)}
+.lb.open img{transform:none}
+.lb .rnd{position:absolute}
+.lb .x{top:22px;right:22px}.lb .p{left:22px;top:50%;margin-top:-27px}.lb .nx{right:22px;top:50%;margin-top:-27px}
+.lb .c{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font:700 16px/1 var(--head);letter-spacing:2px;color:var(--muted)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.001s!important}
+  .grain,.marquee .tr,.cta .big{animation:none!important}
+}
+</style>
+</head>
+<body>
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="lg"><span>S</span><span style="animation-delay:.04s">T</span><span style="animation-delay:.08s">A</span><span style="animation-delay:.12s">V</span><span style="animation-delay:.16s">B</span><span style="animation-delay:.2s">Y</span><span style="animation-delay:.24s">&nbsp;</span><span class="sun" style="animation-delay:.28s">B</span><span class="sun" style="animation-delay:.32s">A</span><span class="sun" style="animation-delay:.36s">R</span><span class="sun" style="animation-delay:.4s">T</span><span class="sun" style="animation-delay:.44s">O</span><span class="sun" style="animation-delay:.48s">N</span><span class="sun" style="animation-delay:.52s">Č</span><span class="sun" style="animation-delay:.56s">Í</span><span class="sun" style="animation-delay:.6s">K</span></div>
+  <div class="num" id="lnum">0</div>
+  <div class="bar" id="lbar"></div>
+</div>
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" id="prog" aria-hidden="true"></div>
+<div class="cur" id="cur" aria-hidden="true"></div>
+<div class="cur-ring" id="ring" aria-hidden="true"><span class="t" id="ringT">OTEVŘÍT</span></div>
+
+<header id="hdr">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Stavby Bartončík – nahoru"><i></i>STAVBY <b>BARTONČÍK</b></a>
+    <nav class="main" aria-label="Hlavní menu">
+      <a class="l" href="#sluzby"><span data-t="Služby">Služby</span></a>
+      <a class="l" href="#stroje"><span data-t="Stroje">Stroje</span></a>
+      <a class="l" href="#realizace"><span data-t="Realizace">Realizace</span></a>
+      <a class="l" href="#kontakt"><span data-t="Kontakt">Kontakt</span></a>
+      <a class="pill mag" href="tel:+420602530041">602 530 041
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
+    </nav>
+  </div>
+</header>
+<div class="mmenu" id="mmenu">
+  <a href="#sluzby">Služby</a><a href="#stroje">Stroje</a><a href="#realizace">Realizace</a><a href="#kontakt">Kontakt</a>
+  <a class="tel" href="tel:+420602530041">+420 602 530 041</a>
+</div>
+
+<main id="top">
+  <section class="hero" style="padding:0">
+    <div class="slides" id="slides" aria-hidden="true">
+      <div style="background-image:url(img/slide1.jpg)" class="on"></div>
+      <div style="background-image:url(img/slide2.jpg)"></div>
+      <div style="background-image:url(img/slide3.jpg)"></div>
+      <div style="background-image:url(img/slide4.jpg)"></div>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="wrap">
+      <span class="eyebrow fade-in" style="--d:.2s">Zemní práce · Luhačovicko</span>
+      <h1 style="margin-top:22px">
+        <span class="ln"><span>Celá stavba</span></span>
+        <span class="ln"><span>pod <span class="sun">jednou</span></span></span>
+        <span class="ln"><span class="outline">střechou</span></span>
+      </h1>
+      <div class="row">
+        <p class="fade-in" style="--d:.55s">Zemní práce, betonáže, ploty a demolice. S vlastními stroji, férově a za přijatelnou cenu.</p>
+        <div class="btns fade-in" style="--d:.7s">
+          <a class="pill mag" href="tel:+420602530041">Zavolat
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="pill ghost mag" href="#kontakt">Nezávazná poptávka</a>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-hint" aria-hidden="true"></div>
+  </section>
+
+  <div class="marquee" aria-hidden="true"><div class="tr" id="mq">
+    <span>Výkopové práce</span><span>Betonáže</span><span>Betonové ploty</span><span>PVC ploty</span><span>Demolice</span><span>Autodoprava</span><span>Autojeřáb</span><span>Hutnění</span>
+  </div></div>
+
+  <section id="sluzby">
+    <div class="wrap">
+      <div class="sh">
+        <div><span class="eyebrow">01 — Služby</span><h2 class="split">Co pro vás uděláme</h2></div>
+        <p class="rv">Naše firma se specializuje na provádění veškerých zemních prací a na práce mechanismy.</p>
+      </div>
+      <div class="stats rv" style="margin-bottom:clamp(60px,8vw,110px)">
+        <div class="stat"><b><span data-count="9">0</span></b><span>strojů ve vlastním parku</span></div>
+        <div class="stat"><b><span data-count="5">0</span><small>m</small></b><span>hloubkový dosah bagru</span></div>
+        <div class="stat"><b><span data-count="8">0</span><small>t</small></b><span>nosnost autojeřábu</span></div>
+        <div class="stat"><b><span data-count="13">0</span><small>m</small></b><span>výška zdvihu jeřábu</span></div>
+      </div>
+      <div class="svc">
+        <article class="card rv"><div class="top"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M4 40h40M8 40V28h14l6 12M22 28l8-14 12 4-4 8"/><path d="M38 26l-6 6 8 4z"/></svg><span class="n">01</span></div><div><h3>Výkopové práce</h3><p>Základy, přípojky, terénní úpravy a výkopy pro stavby všech velikostí.</p></div></article>
+        <article class="card rv" style="--d:.08s"><div class="top"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><rect x="6" y="26" width="36" height="14"/><path d="M6 33h36M18 26v14M30 26v14M14 20l10-12 10 12"/></svg><span class="n">02</span></div><div><h3>Betonáže</h3><p>Základové desky, pasy a další betonové konstrukce.</p></div></article>
+        <article class="card rv" style="--d:.16s"><div class="top"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M4 42h40M8 42V12M24 42V12M40 42V12M8 20h32M8 30h32M8 38h32"/></svg><span class="n">03</span></div><div><h3>Betonové ploty</h3><p>Pevné oplocení, které vydrží desítky let.</p></div></article>
+        <article class="card rv"><div class="top"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M4 42h40M9 42V14l3-4 3 4v28M21 42V14l3-4 3 4v28M33 42V14l3-4 3 4v28M6 22h36M6 34h36"/></svg><span class="n">04</span></div><div><h3>PVC ploty a další</h3><p>Lehčí a údržbou nenáročné oplocení.</p></div></article>
+        <article class="card rv" style="--d:.08s"><div class="top"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M6 42h36M10 42V22l10-8v28M20 24h10v18M34 10l4 4M40 6l-2 6M30 16l-2-2"/></svg><span class="n">05</span></div><div><h3>Demolice</h3><p>Bourání objektů a odvoz suti.</p></div></article>
+        <article class="card rv" style="--d:.16s"><div class="top"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M4 34h26V18H4zM30 24h8l6 6v4H30"/><circle cx="12" cy="37" r="4"/><circle cx="36" cy="37" r="4"/><path d="M18 18L26 4l12 4M38 8v8"/></svg><span class="n">06</span></div><div><h3>Doprava a jeřáb</h3><p>Autodoprava a autojeřáb přímo na stavbu.</p></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="stroje" class="hs">
+    <div class="hs-sticky">
+      <div class="wrap" style="width:100%">
+        <div class="sh">
+          <div><span class="eyebrow">02 — Strojový park</span><h2 class="split">Naše technika</h2></div>
+          <p class="rv">Vlastní technika znamená rychlejší práci a jasnou cenu bez prostředníků. Klikněte na stroj pro detail a fotky.</p>
+        </div>
+      </div>
+      <div class="hs-track" id="track"></div>
+      <div class="hs-bar"><i id="hsbar"></i></div>
+    </div>
+  </section>
+
+  <section id="realizace">
+    <div class="wrap">
+      <div class="sh">
+        <div><span class="eyebrow">03 — Realizace</span><h2 class="split">Naše práce</h2></div>
+        <p class="rv">Ukázky dokončených zakázek.</p>
+      </div>
+      <div class="gal" id="gal">
+        <button class="gi" data-v="Zobrazit"><img src="img/slide2.jpg" alt="Realizace 1" loading="lazy"></button>
+        <button class="gi" data-v="Zobrazit"><img src="img/slide3.jpg" alt="Realizace 2" loading="lazy"></button>
+        <button class="gi" data-v="Zobrazit"><img src="img/slide4.jpg" alt="Realizace 3" loading="lazy"></button>
+        <button class="gi" data-v="Zobrazit"><img src="img/all.jpg" alt="Realizace 4" loading="lazy"></button>
+        <button class="gi" data-v="Zobrazit"><img src="img/slide1.jpg" alt="Realizace 5" loading="lazy"></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="why">
+    <div class="wrap">
+      <span class="eyebrow">04 — Proč my</span>
+      <p class="fill" id="fill" style="margin-top:30px">Jasná domluva. <em class="hl">Jasná cena.</em> Dodržené termíny. Vlastní stroje a <em class="hl">žádní prostředníci.</em></p>
+      <div class="pillars">
+        <div class="pl rv"><b>01</b><h3>Férové jednání</h3><p>Jasná domluva, jasná cena a dodržené termíny.</p></div>
+        <div class="pl rv" style="--d:.1s"><b>02</b><h3>Nezávislost</h3><p>Pracujeme vlastními stroji a nejsme závislí na nikom dalším.</p></div>
+        <div class="pl rv" style="--d:.2s"><b>03</b><h3>Kvalita za přijatelnou cenu</h3><p>Odvedená práce, za kterou se nemusíme stydět.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <a href="#kontakt" data-v="Napsat" aria-label="Pojďme stavět – přejít na kontakt">
+      <div class="big" aria-hidden="true"><span>Pojďme stavět</span><span>Pojďme stavět</span><span>Pojďme stavět</span><span>Pojďme stavět</span></div>
+      <span class="lbl" aria-hidden="true">NEZÁVAZNÁ<br>POPTÁVKA</span>
+    </a>
+  </section>
+
+  <section id="kontakt" class="contact">
+    <div class="wrap">
+      <div class="sh">
+        <div><span class="eyebrow">05 — Kontakt</span><h2 class="split">Napište nám</h2></div>
+        <p class="rv">Popište nám, co potřebujete. Ozveme se vám co nejdřív.</p>
+      </div>
+      <div class="cols">
+        <div class="cinfo rv">
+          <p class="who">Jiří Bartončík</p>
+          <dl>
+            <div><dt>Telefon</dt><dd><a href="tel:+420602530041">+420 602 530 041</a></dd></div>
+            <div><dt>E-mail</dt><dd><a href="mailto:jiribartoncik@seznam.cz">jiribartoncik@seznam.cz</a></dd></div>
+            <div><dt>Adresa</dt><dd>Pozlovice 106<br>763 26 Luhačovice</dd></div>
+          </dl>
+        </div>
+        <form id="contactForm" class="rv" style="--d:.1s" action="https://formsubmit.co/sova.lo541@gmail.com" method="POST">
+          <input type="hidden" name="_subject" value="Nová poptávka z webu Stavby Bartončík">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+          <div class="f"><input id="f1" name="jmeno" autocomplete="name" placeholder=" " required><label for="f1">Jméno</label><i></i></div>
+          <div class="f"><input id="f2" name="kontakt" autocomplete="tel" placeholder=" " required><label for="f2">Telefon nebo e-mail</label><i></i></div>
+          <div class="f"><textarea id="f3" name="zprava" placeholder=" " required></textarea><label for="f3">Co potřebujete?</label><i></i></div>
+          <button type="submit" class="pill mag">Odeslat poptávku
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          <p id="formMsg" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="huge" aria-hidden="true">Bartončík</p>
+    <div class="row">
+      <span>© 2026 Stavby Bartončík, Pozlovice 106, 763 26 Luhačovice</span>
+      <a class="top" href="#top">Nahoru
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+    </div>
+  </div>
+</footer>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="m-media">
+    <div class="m-stage" id="mStage"></div>
+    <div class="m-arrows">
+      <button class="rnd" id="mPrev" aria-label="Předchozí fotografie"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+      <button class="rnd" id="mNext" aria-label="Další fotografie"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></button>
+    </div>
+    <div class="m-thumbs" id="mThumbs"></div>
+  </div>
+  <div class="m-body" id="mBody"></div>
+</div>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Galerie">
+  <img id="lbImg" alt="">
+  <button class="rnd x" id="lbX" aria-label="Zavřít"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <button class="rnd p" id="lbP" aria-label="Předchozí"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+  <button class="rnd nx" id="lbN" aria-label="Další"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></button>
+  <span class="c" id="lbC"></span>
+</div>
+
+<script>
+(function(){
+'use strict';
+var $=function(s,c){return (c||document).querySelector(s)},$$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
+var reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+var fine=matchMedia('(pointer: fine)').matches;
+var ARROW='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M7 17L17 7M8 7h9v9"/></svg>';
+
+/* ---------- data ---------- */
+var M=[
+{id:'fermec-860',k:'Traktorbagr',n:'FERMEC 860',s:'Výkopy do hloubky 5 m',d:'Univerzální traktorbagr pro výkopové práce do hloubky 5 metrů. K dispozici je sada lžic různých šířek včetně pevné svahovky.',sp:[['Váha','8,2 t'],['Hloubkový dosah','5 m'],['Lžíce','š. 30, 40, 50, 60, 70 a 90 cm'],['Svahovka','pevná, š. 150 cm']],p:['72a','72b','72c','73a','73b']},
+{id:'takeuchi-tb290-2',k:'Pásové rypadlo',n:'MIDI TAKEUCHI TB290-2',s:'Pásové rypadlo 9 t',d:'Nové pásové rypadlo ve hmotnostní kategorii 9 t pro realizaci vašich zakázek.',sp:[['Typ','pásové rypadlo'],['Hmotnostní kategorie','9 t']],p:['74a','74b','74c','76a','76b','76c','79a']},
+{id:'takeuchi-tb035',k:'Minibagr',n:'TAKEUCHI TB 035',s:'Minibagr 3 t, dosah 3 m',d:'Kompaktní minibagr s hloubkovým dosahem 3 metry a širokou nabídkou lžic včetně hydraulické svahové.',sp:[['Váha','3 t'],['Hloubkový dosah','3 m'],['Lžíce','š. 30 (řetízková), 40, 50, 60, 70 a 80 cm'],['Další','rozrývací lžíce, hydraulická svahová lžíce š. 120 cm']],p:['48a','48b','48c','65a']},
+{id:'zetor-proxima-hs110',k:'Traktor',n:'Zetor Proxima HS110',s:'Údržba pozemků a komunikací',d:'Služby traktorem nabízíme soukromým osobám, organizacím i zemědělcům.',sp:[['Sečení','sečení a mulčování pozemků'],['Zimní údržba','včetně posypu komunikací'],['Dřevo','dovoz a přibližování dřeva navijákem']],p:['80a','80b','80c','81a','81b','81c']},
+{id:'smykovy-nakladac-unc-060',k:'Smykový nakladač',n:'UNC 060',s:'Nakládka a míchání betonu',d:'Obratný smykový nakladač s několika druhy příslušenství.',sp:[['Váha','3 t'],['Lžíce','š. 170 cm'],['Příslušenství','paletovací vidle, míchací lžíce (míchání betonové směsi)']],p:['51a']},
+{id:'autodoprava-avia-liaz',k:'Autodoprava',n:'AVIA, LIAZ',s:'Převozy materiálu a techniky',d:'Autodopravu, převozy materiálu a techniky zajišťujeme vozidlem AVIA 31 TL+HR (sklápěč S1) s možností připojení vleku.',sp:[['AVIA, celková váha','6 t'],['Hydraulická ruka','dosah 4 m, nosnost 850 kg'],['Přívěs Agados Dona','nosnost 2540 kg, celková hmotnost 3500 kg'],['Rozměry přívěsu','délka 8235 mm, šířka 2540 mm']],p:['52a','52b','52c','61a','61b','61c','63a','63b']},
+{id:'autojerab-praga-v3s',k:'Autojeřáb',n:'Praga V3S AD 080',s:'Nosnost 8 t',d:'Autojeřáb pro zvedání a osazení těžších břemen.',sp:[['Nosnost','8 t / 3 m'],['Výška zdvihu','13 m / 0,5 t'],['Celková hmotnost','10,5 t'],['Počet náprav','3'],['Výška / šířka / délka','3300 / 2400 / 7050 mm']],p:['82a','82b','82c','83a','83b']},
+{id:'vibracni-deska-scheppach',k:'Vibrační deska',n:'Scheppach',s:'Hutnění zeminy, 82,5 kg',d:'Lehká vibrační deska pro hutnění zeminy a pokládku dlažby.',sp:[['Váha','82,5 kg'],['Palivo','benzín'],['Příslušenství','podložka na dlažby']],p:['69a']},
+{id:'vibracni-deska-ammann',k:'Vibrační deska',n:'Ammann',s:'Hutnění zeminy, 750 kg',d:'Těžká vibrační deska pro hutnění zeminy s hydraulickým pojezdem.',sp:[['Váha','750 kg'],['Pojezd','hydraulicky ovládaný, vpřed i vzad'],['Příslušenství','rozšiřující patky']],p:['54a','54b']}
+];
+function im(k,z){return 'img/reference-'+k+'-'+z+'.jpg'}
+function pad(n){return (n<10?'0':'')+n}
+
+/* ---------- preloader ---------- */
+var loader=$('#loader'),lnum=$('#lnum'),lbar=$('#lbar'),pct=0,target=0,loaded=false,started=performance.now();
+var pre=['img/slide1.jpg','img/slide2.jpg'],got=0;
+pre.forEach(function(s){var i=new Image();i.onload=i.onerror=function(){got++;target=Math.max(target,got/pre.length*90)};i.src=s});
+addEventListener('load',function(){loaded=true});
+setTimeout(function(){loaded=true},4500);
+(function tick(){
+  var minT=performance.now()-started>1300;
+  if(loaded&&got>=pre.length)target=100;
+  pct+=(target-pct)*.12+.35;if(pct>target)pct=target;
+  lnum.textContent=Math.round(pct);lbar.style.width=pct+'%';
+  if(finish.d)return;
+  if(pct>=99.5&&minT){finish();return}
+  requestAnimationFrame(tick);
+})();
+setTimeout(finish,5000);
+function finish(){if(finish.d)return;finish.d=1;lnum.textContent='100';lbar.style.width='100%';loader.classList.add('done');document.body.classList.add('ready');setTimeout(function(){loader.remove()},1200);startSlides()}
+if(reduced){loader.remove();document.body.classList.add('ready')}
+
+/* ---------- hero slideshow ---------- */
+var sl=$$('#slides div'),dots=$('#dots'),cur=0,sTimer;
+sl.forEach(function(_,i){var b=document.createElement('button');b.setAttribute('aria-label','Snímek '+(i+1));b.onclick=function(){go(i)};dots.appendChild(b)});
+function go(i){sl[cur].classList.remove('on');dots.children[cur].classList.remove('on');cur=i;sl[cur].classList.add('on');var d=dots.children[cur];d.classList.remove('on');void d.offsetWidth;d.classList.add('on');clearTimeout(sTimer);sTimer=setTimeout(function(){go((cur+1)%sl.length)},6000)}
+function startSlides(){if(!startSlides.d){startSlides.d=1;go(0)}}
+if(reduced)startSlides();
+
+/* ---------- marquee dup ---------- */
+var mq=$('#mq');mq.innerHTML+=mq.innerHTML;
+
+/* ---------- split text ---------- */
+$$('.split').forEach(function(el){
+  var i=0;el.innerHTML=el.textContent.split(' ').map(function(w){return '<span class="w"><span style="--i:'+(i++)+'">'+w+'</span></span>'}).join(' ');
+});
+var fill=$('#fill');
+(function(){
+  var html='';fill.childNodes.forEach(function(n){
+    var hl=n.nodeType===1;var t=n.textContent;
+    t.split(/(\s+)/).forEach(function(w){if(!w)return;if(/^\s+$/.test(w)){html+=w;return}html+='<span class="w'+(hl?' hl':'')+'">'+w+'</span>'});
+  });fill.innerHTML=html;
+})();
+var fillW=$$('.w',fill);
+
+/* ---------- machines ---------- */
+var track=$('#track');
+track.innerHTML=M.map(function(m,i){return '<a class="mc tilt" href="#'+m.id+'" data-i="'+i+'" data-v="Detail"><img src="'+im(m.p[0],'b')+'" alt="'+m.k+' '+m.n+'" loading="lazy"><span class="idx">'+pad(i+1)+' / '+pad(M.length)+'</span><span class="go">'+ARROW+'</span><div class="in"><span class="k">'+m.k+'</span><h3>'+m.n+'</h3><p>'+m.s+'</p></div></a>'}).join('');
+
+/* ---------- reveal observer ---------- */
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');if(e.target.dataset.count!==undefined)count(e.target);io.unobserve(e.target)}})},{threshold:.18,rootMargin:'0px 0px -6% 0px'});
+$$('.rv,.split,.gi,[data-count]').forEach(function(el){if(reduced){el.classList.add('in');if(el.dataset.count)el.textContent=el.dataset.count}else io.observe(el)});
+function count(el){var to=+el.dataset.count,t0=performance.now(),D=1600;(function f(t){var p=Math.min(1,(t-t0)/D);p=1-Math.pow(1-p,4);el.textContent=Math.round(to*p);if(p<1)requestAnimationFrame(f)})(t0)}
+
+/* ---------- scroll loop ---------- */
+var hdr=$('#hdr'),prog=$('#prog'),hs=$('#stroje'),hsbar=$('#hsbar'),hero=$('#slides'),lastY=0,dist=0,ticking=false;
+var mobile=matchMedia('(max-width:900px)');
+function sizeHS(){
+  if(mobile.matches){hs.style.height='';track.style.transform='';dist=0;return}
+  dist=Math.max(0,track.scrollWidth-innerWidth);hs.style.height=(innerHeight+dist)+'px';
+}
+function onScroll(){
+  var y=scrollY,H=document.documentElement.scrollHeight-innerHeight;
+  prog.style.transform='scaleX('+(H>0?y/H:0)+')';
+  hdr.classList.toggle('solid',y>40);
+  if(!document.body.classList.contains('menu'))hdr.classList.toggle('hide',y>lastY&&y>400);
+  lastY=y;
+  if(!reduced&&y<innerHeight*1.2)hero.style.transform='translate3d(0,'+(y*.35)+'px,0)';
+  if(dist){
+    var r=hs.getBoundingClientRect(),p=Math.min(1,Math.max(0,-r.top/(hs.offsetHeight-innerHeight)));
+    track.style.transform='translate3d('+(-p*dist)+'px,0,0)';hsbar.style.transform='scaleX('+p+')';
+  }
+  var fr=fill.getBoundingClientRect(),fp=Math.min(1,Math.max(0,(innerHeight*.85-fr.top)/(fr.height+innerHeight*.35)));
+  var on=Math.round(fp*fillW.length);
+  fillW.forEach(function(w,i){w.classList.toggle('on',reduced||i<on)});
+  ticking=false;
+}
+addEventListener('scroll',function(){if(!ticking){ticking=true;requestAnimationFrame(onScroll)}},{passive:true});
+addEventListener('resize',function(){sizeHS();onScroll()});
+addEventListener('load',function(){sizeHS();onScroll()});
+sizeHS();onScroll();
+
+/* ---------- mobile menu ---------- */
+var burger=$('#burger');
+function menu(o){document.body.classList.toggle('menu',o);document.body.classList.toggle('lock',o);burger.setAttribute('aria-expanded',o)}
+burger.onclick=function(){menu(!document.body.classList.contains('menu'))};
+$$('#mmenu a').forEach(function(a){a.addEventListener('click',function(){menu(false)})});
+
+/* ---------- cursor, magnetic, tilt, spotlight ---------- */
+if(fine&&!reduced){
+  var c=$('#cur'),ring=$('#ring'),ringT=$('#ringT'),mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+  addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;c.style.transform='translate3d('+mx+'px,'+my+'px,0)'});
+  (function loop(){rx+=(mx-rx)*.16;ry+=(my-ry)*.16;ring.style.transform='translate3d('+rx+'px,'+ry+'px,0)';requestAnimationFrame(loop)})();
+  document.addEventListener('mouseover',function(e){var t=e.target.closest('[data-v]');if(t){ringT.textContent=t.dataset.v.toUpperCase();ring.classList.add('big')}});
+  document.addEventListener('mouseout',function(e){var t=e.target.closest('[data-v]');if(t&&!t.contains(e.relatedTarget))ring.classList.remove('big')});
+  $$('.mag').forEach(function(b){
+    b.addEventListener('mousemove',function(e){var r=b.getBoundingClientRect();b.style.transform='translate('+((e.clientX-r.left-r.width/2)*.28)+'px,'+((e.clientY-r.top-r.height/2)*.35)+'px)'});
+    b.addEventListener('mouseleave',function(){b.style.transform=''});
+  });
+  $$('.tilt').forEach(function(t){
+    t.addEventListener('mousemove',function(e){var r=t.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;t.style.transform='perspective(900px) rotateY('+(x*8)+'deg) rotateX('+(-y*8)+'deg)'});
+    t.addEventListener('mouseleave',function(){t.style.transform=''});
+  });
+}
+$$('.card').forEach(function(cd){cd.addEventListener('pointermove',function(e){var r=cd.getBoundingClientRect();cd.style.setProperty('--x',(e.clientX-r.left)+'px');cd.style.setProperty('--y',(e.clientY-r.top)+'px')})});
+
+/* ---------- machine modal ---------- */
+var modal=$('#modal'),stage=$('#mStage'),thumbs=$('#mThumbs'),body=$('#mBody'),mi=0,pi=0,lastFocus=null,base=document.title;
+function openM(i,push){
+  var m=M[i];mi=i;pi=0;
+  var pv=M[(i+M.length-1)%M.length],nx=M[(i+1)%M.length];
+  stage.innerHTML=m.p.map(function(k,j){return '<img src="'+im(k,'b')+'" alt="'+m.k+' '+m.n+' – fotografie '+(j+1)+'"'+(j===0?' class="on"':'')+'>'}).join('');
+  thumbs.innerHTML=m.p.map(function(k,j){return '<button aria-label="Fotografie '+(j+1)+' z '+m.p.length+'"'+(j===0?' aria-current="true"':'')+' data-j="'+j+'"><img src="'+im(k,'s')+'" alt=""></button>'}).join('');
+  thumbs.style.display=m.p.length>1?'':'none';$('.m-arrows').style.display=m.p.length>1?'':'none';
+  body.innerHTML='<button class="rnd close" id="mClose" aria-label="Zavřít" style="--i:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>'+
+    '<span class="eyebrow" style="--i:1">'+pad(i+1)+' / '+pad(M.length)+' · '+m.k+'</span>'+
+    '<h2 id="mTitle" style="--i:2">'+m.n+'</h2><p style="--i:3">'+m.d+'</p>'+
+    '<table class="spec" style="--i:4">'+m.sp.map(function(r){return '<tr><th>'+r[0]+'</th><td>'+r[1]+'</td></tr>'}).join('')+'</table>'+
+    '<div class="btns" style="--i:5"><a class="pill" href="#kontakt" id="mAsk">Poptat tento stroj '+ARROW+'</a><a class="pill ghost" href="tel:+420602530041">602 530 041</a></div>'+
+    '<div class="m-nav" style="--i:6"><button data-go="'+M.indexOf(pv)+'"><small>Předchozí</small>'+pv.n+'</button><button data-go="'+M.indexOf(nx)+'"><small>Další</small>'+nx.n+'</button></div>';
+  if(!modal.classList.contains('open')){lastFocus=document.activeElement;modal.classList.add('open');document.body.classList.add('lock')}
+  else{$$('.m-body>*',modal).forEach(function(el){el.style.animation='none';void el.offsetWidth;el.style.animation=''})}
+  body.scrollTop=0;
+  document.title=m.k+' '+m.n+' – Stavby Bartončík';
+  if(push!==false&&location.hash!=='#'+m.id)history.pushState(null,'','#'+m.id);
+  setTimeout(function(){var x=$('#mClose');if(x)x.focus({preventScroll:true})},50);
+}
+function closeM(push){
+  if(!modal.classList.contains('open'))return;
+  modal.classList.remove('open');document.body.classList.remove('lock');document.title=base;
+  if(push!==false&&M.some(function(m){return '#'+m.id===location.hash}))history.pushState(null,'','#stroje');
+  if(lastFocus)lastFocus.focus({preventScroll:true});
+}
+function photo(j){
+  var imgs=$$('img',stage),n=imgs.length;if(n<2)return;pi=(j+n)%n;
+  imgs.forEach(function(x,k){x.classList.toggle('on',k===pi)});
+  $$('button',thumbs).forEach(function(b,k){if(k===pi){b.setAttribute('aria-current','true');b.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'})}else b.removeAttribute('aria-current')});
+}
+track.addEventListener('click',function(e){var a=e.target.closest('.mc');if(!a)return;e.preventDefault();openM(+a.dataset.i)});
+thumbs.addEventListener('click',function(e){var b=e.target.closest('button');if(b)photo(+b.dataset.j)});
+$('#mPrev').onclick=function(){photo(pi-1)};$('#mNext').onclick=function(){photo(pi+1)};
+body.addEventListener('click',function(e){
+  if(e.target.closest('#mClose'))return closeM();
+  if(e.target.closest('#mAsk')){e.preventDefault();var m=M[mi];closeM();var t=$('#f3');if(!t.value)t.value='Mám zájem o: '+m.k+' '+m.n+'\n';setTimeout(function(){$('#kontakt').scrollIntoView({behavior:reduced?'auto':'smooth'});setTimeout(function(){t.focus({preventScroll:true})},700)},400);return}
+  var g=e.target.closest('[data-go]');if(g)openM(+g.dataset.go);
+});
+/* swipe on stage */
+var sx=null;stage.addEventListener('touchstart',function(e){sx=e.touches[0].clientX},{passive:true});
+stage.addEventListener('touchend',function(e){if(sx===null)return;var dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>40)photo(pi+(dx<0?1:-1));sx=null});
+
+function route(){var id=location.hash.slice(1),i=-1;M.forEach(function(m,k){if(m.id===id)i=k});if(i>=0)openM(i,false);else closeM(false)}
+addEventListener('popstate',route);route();
+
+/* ---------- gallery lightbox ---------- */
+var gi=$$('#gal .gi'),lb=$('#lb'),lbImg=$('#lbImg'),lbC=$('#lbC'),li=0,lbFocus=null;
+function lbShow(i){li=(i+gi.length)%gi.length;var s=$('img',gi[li]);lbImg.src=s.src;lbImg.alt=s.alt;lbC.textContent=pad(li+1)+' / '+pad(gi.length)}
+gi.forEach(function(g,i){g.addEventListener('click',function(){lbFocus=g;lbShow(i);lb.classList.add('open');document.body.classList.add('lock');$('#lbX').focus()})});
+function lbClose(){lb.classList.remove('open');document.body.classList.remove('lock');if(lbFocus)lbFocus.focus()}
+$('#lbX').onclick=lbClose;$('#lbP').onclick=function(){lbShow(li-1)};$('#lbN').onclick=function(){lbShow(li+1)};
+lb.addEventListener('click',function(e){if(e.target===lb)lbClose()});
+
+addEventListener('keydown',function(e){
+  if(lb.classList.contains('open')){if(e.key==='Escape')lbClose();if(e.key==='ArrowLeft')lbShow(li-1);if(e.key==='ArrowRight')lbShow(li+1);return}
+  if(modal.classList.contains('open')){if(e.key==='Escape')closeM();if(e.key==='ArrowLeft')photo(pi-1);if(e.key==='ArrowRight')photo(pi+1);
+    if(e.key==='Tab'){var f=$$('button,a',modal).filter(function(x){return x.offsetParent}),a=f[0],z=f[f.length-1];if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus()}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus()}}
+    return}
+  if(e.key==='Escape'&&document.body.classList.contains('menu'))menu(false);
+});
+
+/* ---------- form ---------- */
+var cf=$('#contactForm'),fm=$('#formMsg');
+cf.addEventListener('submit',function(e){
+  e.preventDefault();
+  var btn=$('button',cf);btn.disabled=true;fm.style.color='';fm.textContent='Odesílám…';
+  var data={};new FormData(cf).forEach(function(v,k){data[k]=v});
+  fetch(cf.action.replace('formsubmit.co/','formsubmit.co/ajax/'),{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(data)})
+  .then(function(r){if(!r.ok)throw 0;return r.json()})
+  .then(function(){cf.reset();fm.style.color='var(--sun)';fm.textContent='Děkujeme, poptávka byla odeslána. Ozveme se vám co nejdříve.'})
+  .catch(function(){fm.textContent='Odeslání se nepodařilo. Zavolejte prosím na +420 602 530 041.'})
+  .then(function(){btn.disabled=false});
+});
+})();
+</script>
+</body>
+</html>
