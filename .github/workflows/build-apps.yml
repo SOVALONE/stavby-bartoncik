@@ -1,0 +1,94 @@
+name: Build admin apps (Android + Windows)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/**'
+      - '.github/workflows/build-apps.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-apps
+  cancel-in-progress: true
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Install Capacitor
+        run: npm install @capacitor/core @capacitor/cli @capacitor/android
+      - name: Create Android project
+        run: npx cap add android
+      - name: Generate icons and splash
+        run: npx --yes @capacitor/assets generate --android --iconBackgroundColor '#0e1013' --iconBackgroundColorDark '#0e1013' --splashBackgroundColor '#0e1013' --splashBackgroundColorDark '#0e1013'
+      - name: Sync
+        run: npx cap sync android
+      - name: Build APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+          cp app/build/outputs/apk/debug/app-debug.apk ../StavbyBartoncik-Sprava.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android
+          path: apps/android/StavbyBartoncik-Sprava.apk
+
+  windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: apps/desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Electron
+        run: npm install --save-dev electron electron-builder
+      - name: Build installers
+        run: npm run dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: |
+            apps/desktop/dist/StavbyBartoncik-Sprava-Setup.exe
+            apps/desktop/dist/StavbyBartoncik-Sprava-Portable.exe
+
+  release:
+    needs: [android, windows]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: out
+          merge-multiple: true
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          ls -la out
+          gh release delete apps --yes --cleanup-tag || true
+          gh release create apps out/* \
+            --target "${{ github.sha }}" \
+            --title "Aplikace pro správu webu / Програми для керування сайтом" \
+            --notes "**Android:** StavbyBartoncik-Sprava.apk — stáhněte do telefonu a nainstalujte (povolte instalaci z neznámých zdrojů).
+          **Windows:** StavbyBartoncik-Sprava-Setup.exe (instalace) nebo StavbyBartoncik-Sprava-Portable.exe (bez instalace).
+
+          Aplikace otevírá administraci webu, takže se aktualizuje sama spolu s webem."
