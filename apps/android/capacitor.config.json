@@ -1,0 +1,13 @@
+{
+  "appId": "cz.stavbybartoncik.admin",
+  "appName": "SB Správa",
+  "webDir": "www",
+  "server": {
+    "url": "https://sovalone.github.io/stavby-bartoncik/admin/",
+    "errorPath": "error.html",
+    "androidScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#0e1013"
+  }
+}

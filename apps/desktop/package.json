@@ -1,0 +1,34 @@
+{
+  "name": "stavby-bartoncik-admin",
+  "productName": "Stavby Bartoncik Sprava",
+  "version": "1.0.0",
+  "description": "Správa webu Stavby Bartončík",
+  "author": "SOVALONE",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win --x64 --publish never"
+  },
+  "build": {
+    "appId": "cz.stavbybartoncik.admin",
+    "productName": "Stavby Bartoncik Sprava",
+    "files": ["main.js", "icon.png", "package.json"],
+    "directories": { "output": "dist" },
+    "win": {
+      "icon": "icon.png",
+      "target": ["nsis", "portable"]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "SB Správa webu",
+      "artifactName": "StavbyBartoncik-Sprava-Setup.exe"
+    },
+    "portable": {
+      "artifactName": "StavbyBartoncik-Sprava-Portable.exe"
+    }
+  }
+}

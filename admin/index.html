@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Správa webu – Stavby Bartončík</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0e1013">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SB Správa">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -133,6 +140,7 @@ label.fl small{font-weight:400}
   <div class="logo">STAVBY <b>BARTONČÍK</b><span data-t="admin"></span></div>
   <span class="dirty" id="dirty" hidden></span>
   <div class="lang" id="lang"><button data-l="cs">CZ</button><button data-l="uk">UA</button></div>
+  <button class="btn sm" id="install" hidden data-t="install"></button>
   <a class="btn sm" href="../" target="_blank" rel="noopener" data-t="viewSite"></a>
   <button class="btn sm" id="logout" hidden data-t="logout"></button>
   <button class="btn pri" id="save" hidden disabled></button>
@@ -149,7 +157,7 @@ var CFG={owner:'SOVALONE',repo:'stavby-bartoncik',branch:'main',file:'content.js
 var API='https://api.github.com',R='/repos/'+CFG.owner+'/'+CFG.repo;
 
 var T={
-cs:{admin:'Správa webu',viewSite:'Zobrazit web ↗',logout:'Odhlásit',save:'Uložit změny',saved:'Vše uloženo',unsaved:'Neuložené změny',
+cs:{install:'⤓ Nainstalovat aplikaci',admin:'Správa webu',viewSite:'Zobrazit web ↗',logout:'Odhlásit',save:'Uložit změny',saved:'Vše uloženo',unsaved:'Neuložené změny',
 loginTitle:'Přihlášení',loginLead:'Pro úpravy webu je potřeba přístupový klíč (token) z GitHubu. Stačí ho vytvořit jednou:',
 s1:'Otevřete <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a> (přihlášení účtem, kterému patří web).',
 s2:'<b>Token name:</b> např. <code>Web admin</code>, <b>Expiration:</b> zvolte dobu platnosti.',
@@ -173,7 +181,7 @@ processing:'Zpracovávám fotky…',imgErr:'Fotku nelze načíst:',
 saving:'Ukládám…',uploading:'Nahrávám fotky',savedOk:'Uloženo! Web se aktualizuje přibližně do 1–2 minut.',
 conflict:'Obsah webu mezitím někdo změnil. Obnovte stránku (vaše neuložené změny se ztratí).',saveErr:'Uložení se nezdařilo: ',
 leave:'Máte neuložené změny. Opravdu odejít?',loading:'Načítám obsah webu…',needName:'Vyplňte název u všech strojů.',heroMin:'Ponechte alespoň jednu úvodní fotku.'},
-uk:{admin:'Керування сайтом',viewSite:'Відкрити сайт ↗',logout:'Вийти',save:'Зберегти зміни',saved:'Усе збережено',unsaved:'Незбережені зміни',
+uk:{install:'⤓ Встановити програму',admin:'Керування сайтом',viewSite:'Відкрити сайт ↗',logout:'Вийти',save:'Зберегти зміни',saved:'Усе збережено',unsaved:'Незбережені зміни',
 loginTitle:'Вхід',loginLead:'Для редагування сайту потрібен ключ доступу (токен) з GitHub. Створити його треба лише один раз:',
 s1:'Відкрийте <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a> (увійдіть акаунтом, якому належить сайт).',
 s2:'<b>Token name:</b> напр. <code>Web admin</code>, <b>Expiration:</b> оберіть термін дії.',
@@ -486,6 +494,13 @@ function save(){
     toast(e.conflict?t('conflict'):t('saveErr')+e.message,'bad');
   });
 }
+
+/* ====== installable app (PWA) ====== */
+var deferredInstall=null;
+if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(function(){});
+addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredInstall=e;$('#install').hidden=false});
+addEventListener('appinstalled',function(){deferredInstall=null;$('#install').hidden=true});
+$('#install').addEventListener('click',function(){if(!deferredInstall)return;deferredInstall.prompt();deferredInstall.userChoice.then(function(){deferredInstall=null;$('#install').hidden=true})});
 
 /* ====== start ====== */
 if(token){gh(R).then(function(){return load()}).catch(function(e){if(e.status===401){localStorage.removeItem('sb_token');sessionStorage.removeItem('sb_token');token='';loginErr=t('badToken')}else loginErr=t('netErr')+e.message;setBusy(false);render()})}
