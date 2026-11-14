@@ -19,6 +19,7 @@
   --ease:cubic-bezier(.16,1,.3,1);
 }
 *,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
 html{scroll-behavior:smooth;scroll-padding-top:80px;-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.65 var(--body);overflow-x:hidden;-webkit-font-smoothing:antialiased}
 body.lock{overflow:hidden}
@@ -199,18 +200,19 @@ section{padding:clamp(90px,13vw,170px) 0;position:relative}
 }
 
 /* gallery */
-.gal{display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:clamp(130px,14vw,200px);gap:16px}
-.gi{position:relative;border-radius:18px;overflow:hidden;background:var(--panel);clip-path:inset(12% 12% 12% 12% round 18px);transition:clip-path 1.4s var(--ease)}
+.gal{display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:clamp(150px,17vw,250px);grid-auto-flow:dense;gap:16px}
+.gi{position:relative;border-radius:18px;overflow:hidden;background:var(--panel);padding:0;text-align:left;grid-column:span 2;clip-path:inset(12% 12% 12% 12% round 18px);transition:clip-path 1.4s var(--ease)}
 .gi.in{clip-path:inset(0 0 0 0 round 18px)}
 .gi img{width:100%;height:100%;object-fit:cover;transform:scale(1.3);transition:transform 1.6s var(--ease)}
 .gi.in img{transform:scale(1)}
 .gi:hover img{transform:scale(1.07)}
-.gi:nth-child(1){grid-column:span 7;grid-row:span 3}
-.gi:nth-child(2){grid-column:span 5;grid-row:span 2}
-.gi:nth-child(3){grid-column:span 5;grid-row:span 2}
-.gi:nth-child(4){grid-column:span 4;grid-row:span 2}
-.gi:nth-child(5){grid-column:span 3;grid-row:span 2}
-@media(max-width:800px){.gal{grid-template-columns:1fr 1fr;grid-auto-rows:42vw}.gi:nth-child(n){grid-column:span 1;grid-row:span 1}.gi:nth-child(1){grid-column:span 2;grid-row:span 2}}
+.gi:nth-child(12n+1){grid-column:1/span 4;grid-row:span 2}
+.gi:nth-child(12n+7){grid-column:3/span 4;grid-row:span 2}
+.gi .cap{position:absolute;left:0;right:0;bottom:0;padding:44px 22px 18px;background:linear-gradient(transparent,rgba(0,0,0,.85));transform:translateY(30%);opacity:0;transition:transform .6s var(--ease),opacity .4s}
+.gi:hover .cap,.gi:focus-visible .cap{transform:none;opacity:1}
+.gi .cap b{display:block;font:800 26px/1 var(--head);text-transform:uppercase}
+.gi .cap span{display:block;color:#c3c9cc;font-size:14px;margin-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+@media(max-width:800px){.gal{grid-template-columns:1fr 1fr;grid-auto-rows:42vw}.gi:nth-child(n){grid-column:span 1;grid-row:span 1}.gi:nth-child(6n+1){grid-column:span 2;grid-row:span 2}.gi .cap{transform:none;opacity:1;padding:30px 14px 12px}.gi .cap b{font-size:20px}.gi .cap span{display:none}}
 
 /* why – scroll fill */
 .why{background:var(--bg)}
@@ -302,6 +304,12 @@ footer .top:hover{color:var(--sun)}
 .lb .rnd{position:absolute}
 .lb .x{top:22px;right:22px}.lb .p{left:22px;top:50%;margin-top:-27px}.lb .nx{right:22px;top:50%;margin-top:-27px}
 .lb .c{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font:700 16px/1 var(--head);letter-spacing:2px;color:var(--muted)}
+.lb figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:18px;max-width:90vw}
+.lb figcaption{text-align:center;max-width:70ch}
+.lb figcaption b{display:block;font:800 30px/1 var(--head);text-transform:uppercase}
+.lb figcaption span{display:block;color:#c3c9cc;margin-top:8px;font-size:16px}
+.lb figcaption:empty{display:none}
+.lb.cap img{max-height:70vh}
 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.001s!important}
@@ -341,12 +349,7 @@ footer .top:hover{color:var(--sun)}
 
 <main id="top">
   <section class="hero" style="padding:0">
-    <div class="slides" id="slides" aria-hidden="true">
-      <div style="background-image:url(img/slide1.jpg)" class="on"></div>
-      <div style="background-image:url(img/slide2.jpg)"></div>
-      <div style="background-image:url(img/slide3.jpg)"></div>
-      <div style="background-image:url(img/slide4.jpg)"></div>
-    </div>
+    <div class="slides" id="slides" aria-hidden="true"></div>
     <div class="dots" id="dots"></div>
     <div class="wrap">
       <span class="eyebrow fade-in" style="--d:.2s">Zemní práce · Luhačovicko</span>
@@ -378,7 +381,7 @@ footer .top:hover{color:var(--sun)}
         <p class="rv">Naše firma se specializuje na provádění veškerých zemních prací a na práce mechanismy.</p>
       </div>
       <div class="stats rv" style="margin-bottom:clamp(60px,8vw,110px)">
-        <div class="stat"><b><span data-count="9">0</span></b><span>strojů ve vlastním parku</span></div>
+        <div class="stat"><b><span data-count="9" id="mcount">0</span></b><span>strojů ve vlastním parku</span></div>
         <div class="stat"><b><span data-count="5">0</span><small>m</small></b><span>hloubkový dosah bagru</span></div>
         <div class="stat"><b><span data-count="8">0</span><small>t</small></b><span>nosnost autojeřábu</span></div>
         <div class="stat"><b><span data-count="13">0</span><small>m</small></b><span>výška zdvihu jeřábu</span></div>
@@ -413,13 +416,7 @@ footer .top:hover{color:var(--sun)}
         <div><span class="eyebrow">03 — Realizace</span><h2 class="split">Naše práce</h2></div>
         <p class="rv">Ukázky dokončených zakázek.</p>
       </div>
-      <div class="gal" id="gal">
-        <button class="gi" data-v="Zobrazit"><img src="img/slide2.jpg" alt="Realizace 1" loading="lazy"></button>
-        <button class="gi" data-v="Zobrazit"><img src="img/slide3.jpg" alt="Realizace 2" loading="lazy"></button>
-        <button class="gi" data-v="Zobrazit"><img src="img/slide4.jpg" alt="Realizace 3" loading="lazy"></button>
-        <button class="gi" data-v="Zobrazit"><img src="img/all.jpg" alt="Realizace 4" loading="lazy"></button>
-        <button class="gi" data-v="Zobrazit"><img src="img/slide1.jpg" alt="Realizace 5" loading="lazy"></button>
-      </div>
+      <div class="gal" id="gal"></div>
     </div>
   </section>
 
@@ -497,7 +494,7 @@ footer .top:hover{color:var(--sun)}
 </div>
 
 <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Galerie">
-  <img id="lbImg" alt="">
+  <figure><img id="lbImg" alt=""><figcaption id="lbCap"></figcaption></figure>
   <button class="rnd x" id="lbX" aria-label="Zavřít"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   <button class="rnd p" id="lbP" aria-label="Předchozí"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button>
   <button class="rnd nx" id="lbN" aria-label="Další"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></button>
@@ -505,7 +502,8 @@ footer .top:hover{color:var(--sun)}
 </div>
 
 <script>
-(function(){
+(function(){var s=document.createElement('script');s.src='content.js?v='+Date.now();s.onload=s.onerror=function(){run()};document.head.appendChild(s)})();
+function run(){
 'use strict';
 var $=function(s,c){return (c||document).querySelector(s)},$$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
 var reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -513,25 +511,23 @@ var fine=matchMedia('(pointer: fine)').matches;
 var ARROW='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M7 17L17 7M8 7h9v9"/></svg>';
 
 /* ---------- data ---------- */
-var M=[
-{id:'fermec-860',k:'Traktorbagr',n:'FERMEC 860',s:'Výkopy do hloubky 5 m',d:'Univerzální traktorbagr pro výkopové práce do hloubky 5 metrů. K dispozici je sada lžic různých šířek včetně pevné svahovky.',sp:[['Váha','8,2 t'],['Hloubkový dosah','5 m'],['Lžíce','š. 30, 40, 50, 60, 70 a 90 cm'],['Svahovka','pevná, š. 150 cm']],p:['72a','72b','72c','73a','73b']},
-{id:'takeuchi-tb290-2',k:'Pásové rypadlo',n:'MIDI TAKEUCHI TB290-2',s:'Pásové rypadlo 9 t',d:'Nové pásové rypadlo ve hmotnostní kategorii 9 t pro realizaci vašich zakázek.',sp:[['Typ','pásové rypadlo'],['Hmotnostní kategorie','9 t']],p:['74a','74b','74c','76a','76b','76c','79a']},
-{id:'takeuchi-tb035',k:'Minibagr',n:'TAKEUCHI TB 035',s:'Minibagr 3 t, dosah 3 m',d:'Kompaktní minibagr s hloubkovým dosahem 3 metry a širokou nabídkou lžic včetně hydraulické svahové.',sp:[['Váha','3 t'],['Hloubkový dosah','3 m'],['Lžíce','š. 30 (řetízková), 40, 50, 60, 70 a 80 cm'],['Další','rozrývací lžíce, hydraulická svahová lžíce š. 120 cm']],p:['48a','48b','48c','65a']},
-{id:'zetor-proxima-hs110',k:'Traktor',n:'Zetor Proxima HS110',s:'Údržba pozemků a komunikací',d:'Služby traktorem nabízíme soukromým osobám, organizacím i zemědělcům.',sp:[['Sečení','sečení a mulčování pozemků'],['Zimní údržba','včetně posypu komunikací'],['Dřevo','dovoz a přibližování dřeva navijákem']],p:['80a','80b','80c','81a','81b','81c']},
-{id:'smykovy-nakladac-unc-060',k:'Smykový nakladač',n:'UNC 060',s:'Nakládka a míchání betonu',d:'Obratný smykový nakladač s několika druhy příslušenství.',sp:[['Váha','3 t'],['Lžíce','š. 170 cm'],['Příslušenství','paletovací vidle, míchací lžíce (míchání betonové směsi)']],p:['51a']},
-{id:'autodoprava-avia-liaz',k:'Autodoprava',n:'AVIA, LIAZ',s:'Převozy materiálu a techniky',d:'Autodopravu, převozy materiálu a techniky zajišťujeme vozidlem AVIA 31 TL+HR (sklápěč S1) s možností připojení vleku.',sp:[['AVIA, celková váha','6 t'],['Hydraulická ruka','dosah 4 m, nosnost 850 kg'],['Přívěs Agados Dona','nosnost 2540 kg, celková hmotnost 3500 kg'],['Rozměry přívěsu','délka 8235 mm, šířka 2540 mm']],p:['52a','52b','52c','61a','61b','61c','63a','63b']},
-{id:'autojerab-praga-v3s',k:'Autojeřáb',n:'Praga V3S AD 080',s:'Nosnost 8 t',d:'Autojeřáb pro zvedání a osazení těžších břemen.',sp:[['Nosnost','8 t / 3 m'],['Výška zdvihu','13 m / 0,5 t'],['Celková hmotnost','10,5 t'],['Počet náprav','3'],['Výška / šířka / délka','3300 / 2400 / 7050 mm']],p:['82a','82b','82c','83a','83b']},
-{id:'vibracni-deska-scheppach',k:'Vibrační deska',n:'Scheppach',s:'Hutnění zeminy, 82,5 kg',d:'Lehká vibrační deska pro hutnění zeminy a pokládku dlažby.',sp:[['Váha','82,5 kg'],['Palivo','benzín'],['Příslušenství','podložka na dlažby']],p:['69a']},
-{id:'vibracni-deska-ammann',k:'Vibrační deska',n:'Ammann',s:'Hutnění zeminy, 750 kg',d:'Těžká vibrační deska pro hutnění zeminy s hydraulickým pojezdem.',sp:[['Váha','750 kg'],['Pojezd','hydraulicky ovládaný, vpřed i vzad'],['Příslušenství','rozšiřující patky']],p:['54a','54b']}
-];
-function im(k,z){return 'img/reference-'+k+'-'+z+'.jpg'}
+var S=window.SITE||{};
+var M=S.machines||[],HERO=S.hero||[],GAL=S.gallery||[];
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function im(k,z){return 'img/'+k+'-'+z+'.jpg'}
 function pad(n){return (n<10?'0':'')+n}
 
 /* ---------- preloader ---------- */
 var loader=$('#loader'),lnum=$('#lnum'),lbar=$('#lbar'),pct=0,target=0,loaded=false,started=performance.now();
-var pre=['img/slide1.jpg','img/slide2.jpg'],got=0;
+/* render dynamic content */
+$('#slides').innerHTML=HERO.map(function(h,i){return '<div style="background-image:url(\''+esc(h)+'\')"'+(i===0?' class="on"':'')+'></div>'}).join('');
+$('#gal').innerHTML=GAL.map(function(g,i){var t=g.t||'',d=g.d||'';return '<button class="gi" data-v="Zobrazit"><img src="'+esc(g.img)+'" alt="'+esc(t||('Realizace '+(i+1)))+'" loading="lazy">'+(t||d?'<span class="cap">'+(t?'<b>'+esc(t)+'</b>':'')+(d?'<span>'+esc(d)+'</span>':'')+'</span>':'')+'</button>'}).join('');
+$('#mcount').dataset.count=M.length;
+if(!GAL.length){$('#realizace').hidden=true;$$('a[href="#realizace"]').forEach(function(a){a.hidden=true})}
+if(!M.length){$('#stroje').hidden=true;$$('a[href="#stroje"]').forEach(function(a){a.hidden=true})}
+var pre=HERO.slice(0,2),got=0;
 pre.forEach(function(s){var i=new Image();i.onload=i.onerror=function(){got++;target=Math.max(target,got/pre.length*90)};i.src=s});
-addEventListener('load',function(){loaded=true});
+if(document.readyState==='complete')loaded=true;else addEventListener('load',function(){loaded=true});
 setTimeout(function(){loaded=true},4500);
 (function tick(){
   var minT=performance.now()-started>1300;
@@ -550,7 +546,7 @@ if(reduced){loader.remove();document.body.classList.add('ready')}
 var sl=$$('#slides div'),dots=$('#dots'),cur=0,sTimer;
 sl.forEach(function(_,i){var b=document.createElement('button');b.setAttribute('aria-label','Snímek '+(i+1));b.onclick=function(){go(i)};dots.appendChild(b)});
 function go(i){sl[cur].classList.remove('on');dots.children[cur].classList.remove('on');cur=i;sl[cur].classList.add('on');var d=dots.children[cur];d.classList.remove('on');void d.offsetWidth;d.classList.add('on');clearTimeout(sTimer);sTimer=setTimeout(function(){go((cur+1)%sl.length)},6000)}
-function startSlides(){if(!startSlides.d){startSlides.d=1;go(0)}}
+function startSlides(){if(!startSlides.d&&sl.length){startSlides.d=1;go(0)}}
 if(reduced)startSlides();
 
 /* ---------- marquee dup ---------- */
@@ -571,7 +567,7 @@ var fillW=$$('.w',fill);
 
 /* ---------- machines ---------- */
 var track=$('#track');
-track.innerHTML=M.map(function(m,i){return '<a class="mc tilt" href="#'+m.id+'" data-i="'+i+'" data-v="Detail"><img src="'+im(m.p[0],'b')+'" alt="'+m.k+' '+m.n+'" loading="lazy"><span class="idx">'+pad(i+1)+' / '+pad(M.length)+'</span><span class="go">'+ARROW+'</span><div class="in"><span class="k">'+m.k+'</span><h3>'+m.n+'</h3><p>'+m.s+'</p></div></a>'}).join('');
+track.innerHTML=M.map(function(m,i){return '<a class="mc tilt" href="#'+esc(m.id)+'" data-i="'+i+'" data-v="Detail">'+(m.p&&m.p.length?'<img src="'+esc(im(m.p[0],'b'))+'" alt="'+esc(m.k+' '+m.n)+'" loading="lazy">':'')+'<span class="idx">'+pad(i+1)+' / '+pad(M.length)+'</span><span class="go">'+ARROW+'</span><div class="in"><span class="k">'+esc(m.k)+'</span><h3>'+esc(m.n)+'</h3><p>'+esc(m.s)+'</p></div></a>'}).join('');
 
 /* ---------- reveal observer ---------- */
 var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');if(e.target.dataset.count!==undefined)count(e.target);io.unobserve(e.target)}})},{threshold:.18,rootMargin:'0px 0px -6% 0px'});
@@ -633,17 +629,17 @@ $$('.card').forEach(function(cd){cd.addEventListener('pointermove',function(e){v
 /* ---------- machine modal ---------- */
 var modal=$('#modal'),stage=$('#mStage'),thumbs=$('#mThumbs'),body=$('#mBody'),mi=0,pi=0,lastFocus=null,base=document.title;
 function openM(i,push){
-  var m=M[i];mi=i;pi=0;
+  var m=M[i];mi=i;pi=0;m.p=m.p||[];m.sp=m.sp||[];
   var pv=M[(i+M.length-1)%M.length],nx=M[(i+1)%M.length];
-  stage.innerHTML=m.p.map(function(k,j){return '<img src="'+im(k,'b')+'" alt="'+m.k+' '+m.n+' – fotografie '+(j+1)+'"'+(j===0?' class="on"':'')+'>'}).join('');
-  thumbs.innerHTML=m.p.map(function(k,j){return '<button aria-label="Fotografie '+(j+1)+' z '+m.p.length+'"'+(j===0?' aria-current="true"':'')+' data-j="'+j+'"><img src="'+im(k,'s')+'" alt=""></button>'}).join('');
+  stage.innerHTML=m.p.map(function(k,j){return '<img src="'+esc(im(k,'b'))+'" alt="'+esc(m.k+' '+m.n)+' – fotografie '+(j+1)+'"'+(j===0?' class="on"':'')+'>'}).join('');
+  thumbs.innerHTML=m.p.map(function(k,j){return '<button aria-label="Fotografie '+(j+1)+' z '+m.p.length+'"'+(j===0?' aria-current="true"':'')+' data-j="'+j+'"><img src="'+esc(im(k,'s'))+'" alt=""></button>'}).join('');
   thumbs.style.display=m.p.length>1?'':'none';$('.m-arrows').style.display=m.p.length>1?'':'none';
   body.innerHTML='<button class="rnd close" id="mClose" aria-label="Zavřít" style="--i:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>'+
-    '<span class="eyebrow" style="--i:1">'+pad(i+1)+' / '+pad(M.length)+' · '+m.k+'</span>'+
-    '<h2 id="mTitle" style="--i:2">'+m.n+'</h2><p style="--i:3">'+m.d+'</p>'+
-    '<table class="spec" style="--i:4">'+m.sp.map(function(r){return '<tr><th>'+r[0]+'</th><td>'+r[1]+'</td></tr>'}).join('')+'</table>'+
+    '<span class="eyebrow" style="--i:1">'+pad(i+1)+' / '+pad(M.length)+' · '+esc(m.k)+'</span>'+
+    '<h2 id="mTitle" style="--i:2">'+esc(m.n)+'</h2><p style="--i:3">'+esc(m.d).replace(/\n/g,'<br>')+'</p>'+
+    (m.sp.length?'<table class="spec" style="--i:4">'+m.sp.map(function(r){return '<tr><th>'+esc(r[0])+'</th><td>'+esc(r[1])+'</td></tr>'}).join('')+'</table>':'<div style="height:30px"></div>')+
     '<div class="btns" style="--i:5"><a class="pill" href="#kontakt" id="mAsk">Poptat tento stroj '+ARROW+'</a><a class="pill ghost" href="tel:+420602530041">602 530 041</a></div>'+
-    '<div class="m-nav" style="--i:6"><button data-go="'+M.indexOf(pv)+'"><small>Předchozí</small>'+pv.n+'</button><button data-go="'+M.indexOf(nx)+'"><small>Další</small>'+nx.n+'</button></div>';
+    '<div class="m-nav" style="--i:6"><button data-go="'+M.indexOf(pv)+'"><small>Předchozí</small>'+esc(pv.n)+'</button><button data-go="'+M.indexOf(nx)+'"><small>Další</small>'+esc(nx.n)+'</button></div>';
   if(!modal.classList.contains('open')){lastFocus=document.activeElement;modal.classList.add('open');document.body.classList.add('lock')}
   else{$$('.m-body>*',modal).forEach(function(el){el.style.animation='none';void el.offsetWidth;el.style.animation=''})}
   body.scrollTop=0;
@@ -679,7 +675,9 @@ addEventListener('popstate',route);route();
 
 /* ---------- gallery lightbox ---------- */
 var gi=$$('#gal .gi'),lb=$('#lb'),lbImg=$('#lbImg'),lbC=$('#lbC'),li=0,lbFocus=null;
-function lbShow(i){li=(i+gi.length)%gi.length;var s=$('img',gi[li]);lbImg.src=s.src;lbImg.alt=s.alt;lbC.textContent=pad(li+1)+' / '+pad(gi.length)}
+var lbCap=$('#lbCap');
+function lbShow(i){li=(i+gi.length)%gi.length;var s=$('img',gi[li]),g=GAL[li]||{};lbImg.src=s.src;lbImg.alt=s.alt;lbC.textContent=pad(li+1)+' / '+pad(gi.length);
+  lbCap.innerHTML=(g.t?'<b>'+esc(g.t)+'</b>':'')+(g.d?'<span>'+esc(g.d).replace(/\n/g,'<br>')+'</span>':'');lb.classList.toggle('cap',!!(g.t||g.d))}
 gi.forEach(function(g,i){g.addEventListener('click',function(){lbFocus=g;lbShow(i);lb.classList.add('open');document.body.classList.add('lock');$('#lbX').focus()})});
 function lbClose(){lb.classList.remove('open');document.body.classList.remove('lock');if(lbFocus)lbFocus.focus()}
 $('#lbX').onclick=lbClose;$('#lbP').onclick=function(){lbShow(li-1)};$('#lbN').onclick=function(){lbShow(li+1)};
@@ -705,7 +703,7 @@ cf.addEventListener('submit',function(e){
   .catch(function(){fm.textContent='Odeslání se nepodařilo. Zavolejte prosím na +420 602 530 041.'})
   .then(function(){btn.disabled=false});
 });
-})();
+}
 </script>
 </body>
 </html>
