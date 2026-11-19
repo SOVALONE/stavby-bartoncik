@@ -3,7 +3,7 @@
   "appName": "SB Správa",
   "webDir": "www",
   "server": {
-    "url": "https://sovalone.github.io/stavby-bartoncik/admin/",
+    "url": "https://stavby-bartoncik.github.io/stavby-bartoncik/admin/",
     "errorPath": "error.html",
     "androidScheme": "https"
   },

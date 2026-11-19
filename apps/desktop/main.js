@@ -3,7 +3,7 @@
 const { app, BrowserWindow, shell, dialog, Menu } = require('electron');
 const path = require('path');
 
-const ADMIN_URL = 'https://sovalone.github.io/stavby-bartoncik/admin/';
+const ADMIN_URL = 'https://stavby-bartoncik.github.io/stavby-bartoncik/admin/';
 const ORIGIN = new URL(ADMIN_URL).origin;
 
 function offlinePage() {
